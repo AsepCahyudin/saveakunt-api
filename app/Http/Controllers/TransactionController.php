@@ -111,8 +111,7 @@ class TransactionController extends Controller
     public function update(Request $request, $id)
     {
         $transaction = Transaction::findOrFail($id);
-        // print_r($transaction);die;
-
+        
         $validator = Validator::make($request->all(), [
             'title' => ['required'],
             'amount' => ['required', 'numeric'],
@@ -147,6 +146,20 @@ class TransactionController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $transaction = Transaction::findOrFail($id);
+
+        try {
+            $transaction->delete();
+            $response = [
+                'message' => 'Transaction deleted successfully'
+            ];
+
+            return response()->json($response, Response::HTTP_OK);
+        } catch (QueryException $e){
+            return response()->json([
+                'message' => 'Failed ' . $e->errorInfo
+            ]);
+                
+        }
     }
 }
